@@ -1,9 +1,9 @@
 (ns datomicwatch.core
   (:require
+    [clojure.edn]
     [metrics.reporters.graphite :as graphite-reporter]
     [metrics.reporters :as rmng]
     [metrics.core]
-    [clojure.edn]
     [metrics.histograms :as histograms]))
 
 (def state (atom {}))
@@ -23,6 +23,7 @@
 
 (defn callback
   [X]
+  (println "callback: " X)
   (when config
     (doall
       (map (fn [[k v]]
