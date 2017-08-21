@@ -16,14 +16,15 @@
 
 (defn report
   [title value]
-  (println "title: " title " value: " value)
   (when-not (get @state title)
-    (swap! state assoc title (histograms/histogram registry ["datomic" "watch" title])))
+    (->> ["datomic" "watch" title]
+         (filterv identity)
+         (histograms/histogram registry)
+         (swap! state assoc title)))
   (histograms/update! (get @state title) value))
 
 (defn callback
   [X]
-  (println "callback: " X)
   (when config
     (doall
       (map (fn [[k v]]
