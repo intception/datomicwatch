@@ -7,7 +7,15 @@
     [metrics.histograms :as histograms]))
 
 (def state (atom {}))
-(def config (try (clojure.edn/read-string (slurp "/etc/datomic.watch.edn")) (catch Exception e)))
+(def url (or (System/getProperty "datomicwatch.configFile")
+             "/etc/datomic.watch.edn"))
+
+(def config (try (-> (or (System/getProperty "datomicwatch.configFile")
+                         "/etc/datomic.watch.edn")
+                     slurp
+                     clojure.edn/read-string)
+                 (catch Exception e)))
+
 (def registry (metrics.core/new-registry))
 (def reporter (when config
                 (rmng/start
