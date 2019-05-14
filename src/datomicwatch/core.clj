@@ -1,6 +1,7 @@
 (ns datomicwatch.core
   (:require
     [clojure.edn]
+    [metrics.jvm.core]
     [metrics.reporters.graphite :as graphite-reporter]
     [metrics.reporters :as rmng]
     [metrics.core]
@@ -17,6 +18,10 @@
                  (catch Exception e)))
 
 (def registry (metrics.core/new-registry))
+
+(when (System/getProperty "instrument-jvm")
+  (metrics.jvm.core/instrument-jvm registry))
+
 (def reporter (when config
                 (rmng/start
                   (graphite-reporter/reporter registry config)
